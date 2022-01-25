@@ -99,6 +99,16 @@ module "iis" {
   resource_group_name = azurerm_resource_group.greenford.name
   location            = azurerm_resource_group.greenford.location
 
-  subnet_id = azurerm_subnet.a_bastion.id
+  subnet_id = azurerm_subnet.a.id
   script    = "iis"
+}
+
+
+module "hcm" {
+  source              = "./modules/windows_server"
+  name                = "hcm"
+  resource_group_name = azurerm_resource_group.greenford.name
+  location            = azurerm_resource_group.greenford.location
+
+  subnet_id = azurerm_subnet.a.id
 }

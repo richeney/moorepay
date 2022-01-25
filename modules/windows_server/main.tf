@@ -3,11 +3,11 @@ data "external" "github" {
   program = ["bash", "${path.module}/raw_uri_path.sh"]
 }
 
-resource "azurerm_marketplace_agreement" "windows_server_2022" {
-  publisher = "microsoftwindowsserver"
-  offer     = "microsoftserveroperatingsystems-previews"
-  plan      = "windows-server-2022-azure-edition-preview"
-}
+// resource "azurerm_marketplace_agreement" "windows_server_2022" {
+//   publisher = "microsoftwindowsserver"
+//   offer     = "microsoftserveroperatingsystems-previews"
+//   plan      = "windows-server-2022-azure-edition-preview"
+// }
 
 resource "azurerm_network_interface" "vm" {
   name                = "${var.name}-nic"
@@ -25,7 +25,7 @@ resource "azurerm_windows_virtual_machine" "vm" {
   name                = "${var.name}-vm"
   location            = var.location
   resource_group_name = var.resource_group_name
-  depends_on          = [azurerm_marketplace_agreement.windows_server_2022]
+  // depends_on          = [azurerm_marketplace_agreement.windows_server_2022]
 
   network_interface_ids = [azurerm_network_interface.vm.id]
   size                  = "Standard_D2_v4"
@@ -55,7 +55,8 @@ resource "azurerm_windows_virtual_machine" "vm" {
 }
 
 resource "azurerm_virtual_machine_extension" "vm" {
-  name                 = "install-iis-on-${var.name}"
+  for_each = toset(var.script != null ? [var.script] : [])
+  name                 = "install-${var.script}-on-${var.name}"
   virtual_machine_id   = azurerm_windows_virtual_machine.vm.id
   publisher            = "Microsoft.Compute"
   type                 = "CustomScriptExtension"

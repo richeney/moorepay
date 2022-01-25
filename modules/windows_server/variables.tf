@@ -15,12 +15,11 @@ variable "subnet_id" {
 }
 
 variable "script" {
-  type = string
-
+  type    = string
   default = null
 
   validation {
-    condition     = contains(["iis", "addc"], var.script)
+    condition     = var.script == null || contains(["iis", "addc", "_null"], coalesce(var.script, "_null"))
     error_message = "The script type (files pulled from local.os). Must be set to either iis or addc."
   }
 }

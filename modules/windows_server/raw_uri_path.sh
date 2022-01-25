@@ -24,6 +24,7 @@ origin=$(git remote get-url origin | head -1 | grep ^"https://github.com/")
 origin=${origin##https://github.com/}
 user=${origin%%/*}
 repo=${origin##*/}
+repo=${repo%%.git}
 
 # Check we have the expected number of words
 [[ $(echo $user $repo $branch | wc -w) -eq 3 ]]
